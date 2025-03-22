@@ -1,5 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { StripeService } from './stripe.service';
+import { SubscriptionGuard } from '../common/guards/subscription.guard';
+import { RequiresPlan } from '../common/decorators/requires-plan.decorator';
 
 @Controller('stripe')
 export class StripeController {
@@ -11,6 +13,8 @@ export class StripeController {
   }
 
   @Get('customers')
+  @UseGuards(SubscriptionGuard)
+  @RequiresPlan('premium') // Este é apenas um exemplo, defina os nomes dos planos conforme seu negócio
   async getCustomers() {
     return await this.stripeService.getCustomers();
   }
