@@ -12,13 +12,22 @@ import {
 
 @Injectable()
 export class SupabaseService {
-  public supabase: SupabaseClient;
+  private supabase: SupabaseClient;
 
   constructor(private configService: ConfigService) {
-    this.supabase = createClient(
-      this.configService.get('SUPABASE_URL') as string,
-      this.configService.get('SUPABASE_SERVICE_KEY') as string,
-    );
+    const supabaseUrl = this.configService.get<string>('SUPABASE_URL');
+    const supabaseKey = this.configService.get<string>('SUPABASE_SERVICE_KEY');
+
+    console.log('SUPABASE_URL:', supabaseUrl);
+    console.log('SUPABASE_KEY:', supabaseKey);
+
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error(
+        'Supabase URL e chave são obrigatórios. Verifique seu arquivo .env',
+      );
+    }
+
+    this.supabase = createClient(supabaseUrl, supabaseKey);
   }
 
   async getUserSubscription(userId: string): Promise<UserSubscription | null> {
@@ -68,6 +77,17 @@ export class SupabaseService {
       .order('images_per_month', { ascending: true });
 
     if (error) throw error;
+    return data;
+  }
+
+  async getUserSubscriptionByCustomerId(customerId: string) {
+    const { data, error } = await this.supabase
+      .from('user_subscriptions')
+      .select('*')
+      .eq('stripe_customer_id', customerId)
+      .single();
+
+    if (error) return null;
     return data;
   }
 }

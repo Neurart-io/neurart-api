@@ -144,11 +144,8 @@ export class StripeService {
   ): Promise<void> {
     const customerId = subscription.customer as string;
 
-    const { data: subscriptionData } = await this.supabaseService.supabase
-      .from('user_subscriptions')
-      .select('*')
-      .eq('stripe_customer_id', customerId)
-      .single();
+    const subscriptionData =
+      await this.supabaseService.getUserSubscriptionByCustomerId(customerId);
 
     if (!subscriptionData) return;
 
@@ -163,7 +160,6 @@ export class StripeService {
       current_period_start: new Date(subscription.current_period_start * 1000),
       current_period_end: new Date(subscription.current_period_end * 1000),
       cancel_at_period_end: subscription.cancel_at_period_end,
-      // Se o plano mudou, atualizar limites
       images_remaining: planConfig.images_per_month,
       max_images_per_generation: planConfig.max_images_per_generation,
       storage_limit: planConfig.storage_limit,

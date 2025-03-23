@@ -1,30 +1,33 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { StripeModule } from './stripe/stripe.module';
+import { SupabaseModule } from './supabase/supabase.module';
 import { HttpErrorInterceptor } from './common/interceptors/http-error.interceptor';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { ThrottlerGuard } from './common/guards/throttler.guard';
-import { SupabaseService } from './supabase/supabase.service';
 
 @Module({
   imports: [
-    ThrottlerModule.forRoot({
-      throttlers: [
-        {
-          ttl: 60, // tempo em segundos
-          limit: 10, // número máximo de requisições nesse período
-        },
-      ],
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
     }),
-    StripeModule.forRootAsync(),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60,
+        limit: 20,
+      },
+    ]),
+    SupabaseModule,
+    StripeModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    // Interceptors globais
     {
       provide: APP_INTERCEPTOR,
       useClass: HttpErrorInterceptor,
@@ -33,14 +36,10 @@ import { SupabaseService } from './supabase/supabase.service';
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
     },
-    // Guards globais
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
-    SupabaseService,
-    // O SubscriptionGuard geralmente não é usado globalmente,
-    // mas aplicado em rotas específicas usando o decorador @UseGuards
   ],
 })
 export class AppModule {}
