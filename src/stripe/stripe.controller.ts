@@ -17,8 +17,8 @@ export class StripeController {
   ) {}
 
   @Get('plans')
-  async getPlans(@Headers('x-region') region: string = 'BR') {
-    return await this.supabaseService.getAllPlans(region);
+  async getPlans() {
+    return await this.supabaseService.getAllPlans();
   }
 
   @Post('create-checkout')

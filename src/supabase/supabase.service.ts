@@ -68,11 +68,10 @@ export class SupabaseService {
     return data;
   }
 
-  async getAllPlans(region: string = 'BR'): Promise<PlanConfiguration[]> {
+  async getAllPlans(): Promise<PlanConfiguration[]> {
     const { data, error } = await this.supabase
       .from('plans_configuration')
       .select('*')
-      .eq('region', region)
       .order('is_free', { ascending: false })
       .order('images_per_month', { ascending: true });
 
