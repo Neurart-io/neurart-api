@@ -5,6 +5,7 @@ import {
   Headers,
   Req,
   RawBodyRequest,
+  Get,
 } from '@nestjs/common';
 import { StripeService } from './stripe.service';
 import { SupabaseService } from '../supabase/supabase.service';
@@ -15,10 +16,10 @@ export class StripeController {
     private supabaseService: SupabaseService,
   ) {}
 
-  // @Get('plans')
-  // async getPlans(@Headers('x-region') region: string = 'BR') {
-  //   return await this.stripeService.getAllPlans(region);
-  // }
+  @Get('plans')
+  async getPlans(@Headers('x-region') region: string = 'BR') {
+    return await this.supabaseService.getAllPlans(region);
+  }
 
   @Post('create-checkout')
   async createCheckout(
