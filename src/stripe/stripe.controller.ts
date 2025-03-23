@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { StripeService } from './stripe.service';
 import { SupabaseService } from '../supabase/supabase.service';
+import { Public } from '../common/decorators/public.decorator';
 @Controller('stripe')
 export class StripeController {
   constructor(
@@ -16,6 +17,7 @@ export class StripeController {
     private supabaseService: SupabaseService,
   ) {}
 
+  @Public()
   @Get('plans')
   async getPlans() {
     return await this.supabaseService.getAllPlans();
