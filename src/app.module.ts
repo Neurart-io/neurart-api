@@ -7,6 +7,7 @@ import { StripeModule } from './stripe/stripe.module';
 import { HttpErrorInterceptor } from './common/interceptors/http-error.interceptor';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { ThrottlerGuard } from './common/guards/throttler.guard';
+import { SupabaseService } from './supabase/supabase.service';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { ThrottlerGuard } from './common/guards/throttler.guard';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+    SupabaseService,
     // O SubscriptionGuard geralmente não é usado globalmente,
     // mas aplicado em rotas específicas usando o decorador @UseGuards
   ],
