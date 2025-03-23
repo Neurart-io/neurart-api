@@ -82,31 +82,31 @@ export class StripeService {
     return session.url as string;
   }
 
-  // async handleWebhook(signature: string, payload: Buffer) {
-  //   let event: Stripe.Event;
+  async handleWebhook(signature: string, payload: Buffer) {
+    let event: Stripe.Event;
 
-  //   try {
-  //     event = this.stripe.webhooks.constructEvent(
-  //       payload,
-  //       signature,
-  //       this.configService.get('STRIPE_WEBHOOK_SECRET') as string,
-  //     );
-  //   } catch (err) {
-  //     throw new Error(`Webhook Error: ${err.message}`);
-  //   }
+    try {
+      event = this.stripe.webhooks.constructEvent(
+        payload,
+        signature,
+        this.configService.get('STRIPE_WEBHOOK_SECRET') as string,
+      );
+    } catch (err) {
+      throw new Error(`Webhook Error: ${err.message}`);
+    }
 
-  //   switch (event.type) {
-  //     case 'checkout.session.completed':
-  //       const session = event.data.object as Stripe.Checkout.Session;
-  //       await this.handleSubscriptionUpdate(session);
-  //       break;
-  //     case 'customer.subscription.updated':
-  //     case 'customer.subscription.deleted':
-  //       const subscription = event.data.object as Stripe.Subscription;
-  //       await this.handleSubscriptionUpdate(subscription);
-  //       break;
-  //   }
-  // }
+    switch (event.type) {
+      case 'checkout.session.completed':
+        const session = event.data.object as Stripe.Checkout.Session;
+        await this.handleSubscriptionCreated(session);
+        break;
+      case 'customer.subscription.updated':
+      case 'customer.subscription.deleted':
+        const subscription = event.data.object as Stripe.Subscription;
+        await this.handleSubscriptionUpdated(subscription);
+        break;
+    }
+  }
 
   private async handleSubscriptionCreated(
     session: Stripe.Checkout.Session,
