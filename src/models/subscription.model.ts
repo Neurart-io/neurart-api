@@ -34,7 +34,8 @@ export interface PlanConfiguration {
   max_images_per_generation: number;
   storage_limit: number;
   is_free: boolean;
-  region: 'BR' | 'INTL';
+  price_real: string;
+  price_dolar: string;
   created_at: Date;
   updated_at: Date;
 }
