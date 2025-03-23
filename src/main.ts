@@ -7,7 +7,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: process.env.ALLOWED_ORIGINS?.split(',') || [
-      'http://localhost:3000',
+      'http://localhost:3000', // TODO: Remover para produção
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,

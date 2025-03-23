@@ -9,7 +9,7 @@ import { SupabaseModule } from './supabase/supabase.module';
 import { HttpErrorInterceptor } from './common/interceptors/http-error.interceptor';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { ThrottlerGuard } from './common/guards/throttler.guard';
-
+import { ApiKeyGuard } from './common/guards/api-key.guard';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -39,6 +39,10 @@ import { ThrottlerGuard } from './common/guards/throttler.guard';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ApiKeyGuard,
     },
   ],
 })
