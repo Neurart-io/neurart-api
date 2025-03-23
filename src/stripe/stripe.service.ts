@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SubscriptionStatus } from 'src/models/subscription.model';
 import { SupabaseService } from 'src/supabase/supabase.service';
@@ -73,7 +73,9 @@ export class StripeService {
     const subscription = await this.supabaseService.getUserSubscription(userId);
 
     if (!subscription?.stripe_customer_id) {
-      throw new Error('Nenhuma assinatura encontrada para este usuário');
+      throw new BadRequestException(
+        'Nenhuma assinatura encontrada para este usuário',
+      );
     }
 
     const session = await this.stripe.billingPortal.sessions.create({
@@ -94,7 +96,7 @@ export class StripeService {
         this.configService.get('STRIPE_WEBHOOK_SECRET') as string,
       );
     } catch (err) {
-      throw new Error(`Webhook Error: ${err.message}`);
+      throw new BadRequestException(`Webhook Error: ${err.message}`);
     }
 
     switch (event.type) {
