@@ -5,6 +5,10 @@
 import { Injectable } from '@nestjs/common';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { ConfigService } from '@nestjs/config';
+import {
+  UserSubscription,
+  PlanConfiguration,
+} from 'src/models/subscription.model';
 
 @Injectable()
 export class SupabaseService {
@@ -17,7 +21,7 @@ export class SupabaseService {
     );
   }
 
-  async getUserSubscription(userId: string) {
+  async getUserSubscription(userId: string): Promise<UserSubscription | null> {
     const { data, error } = await this.supabase
       .from('user_subscriptions')
       .select('*')
@@ -28,7 +32,9 @@ export class SupabaseService {
     return data;
   }
 
-  async updateUserSubscription(subscription: any) {
+  async updateUserSubscription(
+    subscription: Omit<UserSubscription, 'created_at' | 'updated_at' | 'id'>,
+  ): Promise<UserSubscription> {
     const { data, error } = await this.supabase
       .from('user_subscriptions')
       .upsert({
@@ -42,7 +48,7 @@ export class SupabaseService {
     return data;
   }
 
-  async getPlanConfiguration(priceId: string): Promise<any> {
+  async getPlanConfiguration(priceId: string): Promise<PlanConfiguration> {
     const { data, error } = await this.supabase
       .from('plans_configuration')
       .select('*')
@@ -53,7 +59,7 @@ export class SupabaseService {
     return data;
   }
 
-  async getAllPlans(region: string = 'BR') {
+  async getAllPlans(region: string = 'BR'): Promise<PlanConfiguration[]> {
     const { data, error } = await this.supabase
       .from('plans_configuration')
       .select('*')

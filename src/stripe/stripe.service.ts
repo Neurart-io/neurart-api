@@ -6,6 +6,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { SubscriptionStatus } from 'src/models/subscription.model';
 import { SupabaseService } from 'src/supabase/supabase.service';
 import Stripe from 'stripe';
 
@@ -38,10 +39,11 @@ export class StripeService {
     await this.supabaseService.updateUserSubscription({
       user_id: userId,
       stripe_customer_id: customer.id,
-      status: 'free',
-      images_remaining: 10, // valor default do plano gratuito
+      status: SubscriptionStatus.FREE,
+      images_remaining: 10,
       max_images_per_generation: 1,
-      storage_limit: 104857600, // 100MB
+      storage_limit: 1,
+      cancel_at_period_end: false,
     });
 
     return customer.id;
@@ -124,9 +126,10 @@ export class StripeService {
       user_id: userId,
       stripe_subscription_id: subscriptionId,
       plan_id: priceId,
-      status: subscription.status,
+      status: subscription.status as SubscriptionStatus,
       current_period_start: new Date(subscription.current_period_start * 1000),
       current_period_end: new Date(subscription.current_period_end * 1000),
+      cancel_at_period_end: subscription.cancel_at_period_end,
       images_remaining: planConfig?.images_per_month as number,
       max_images_per_generation:
         planConfig?.max_images_per_generation as number,
@@ -154,7 +157,7 @@ export class StripeService {
       user_id: subscriptionData.user_id,
       stripe_subscription_id: subscription.id,
       plan_id: priceId,
-      status: subscription.status,
+      status: subscription.status as SubscriptionStatus,
       current_period_start: new Date(subscription.current_period_start * 1000),
       current_period_end: new Date(subscription.current_period_end * 1000),
       cancel_at_period_end: subscription.cancel_at_period_end,

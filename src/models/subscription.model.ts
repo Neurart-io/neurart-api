@@ -1,17 +1,20 @@
+export enum SubscriptionStatus {
+  ACTIVE = 'active',
+  TRIALING = 'trialing',
+  PAST_DUE = 'past_due',
+  CANCELED = 'canceled',
+  INCOMPLETE = 'incomplete',
+  INCOMPLETE_EXPIRED = 'incomplete_expired',
+  FREE = 'free',
+}
+
 export interface UserSubscription {
   id: string;
   user_id: string;
   stripe_customer_id?: string;
   stripe_subscription_id?: string;
   plan_id?: string;
-  status:
-    | 'active'
-    | 'trialing'
-    | 'past_due'
-    | 'canceled'
-    | 'incomplete'
-    | 'incomplete_expired'
-    | 'free';
+  status: SubscriptionStatus;
   current_period_start?: Date;
   current_period_end?: Date;
   cancel_at_period_end: boolean;
