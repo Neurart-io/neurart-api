@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  api:
+    build: . # Constrói a imagem a partir do Dockerfile na raiz do projeto
+    container_name: neurart-api
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+
+    # Garante que o Redis esteja rodando antes de iniciar a API
+    depends_on:
+      - redis
+
+  # Container com a imagem oficial do Redis
+  redis:
+    image: redis:6.2
+    container_name: neurart-redis
+    ports:
+      - '6379:6379'
