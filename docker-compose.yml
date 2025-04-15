@@ -2,7 +2,10 @@ version: '3.8'
 
 services:
   api:
-    build: . # Constrói a imagem a partir do Dockerfile na raiz do projeto
+    # Constrói a imagem a partir do Dockerfile na raiz do projeto
+    build: .
+    volumes:
+      - .:/app
     container_name: neurart-api
     ports:
       - '3000:3000'
