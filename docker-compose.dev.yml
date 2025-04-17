@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: neurart-api-dev
+    ports:
+      - '3001:3001'
+      - '9229:9229'
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:6.2
+    container_name: neurart-redis-dev
+    ports:
+      - '6379:6379'
