@@ -10,6 +10,8 @@ import { HttpErrorInterceptor } from './common/interceptors/http-error.intercept
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { ThrottlerGuard } from './common/guards/throttler.guard';
 import { ApiKeyGuard } from './common/guards/api-key.guard';
+import { ImageQueueController } from './jobs/image-queue.controller';
+import { ImageQueueService } from './jobs/image-queue.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,7 +27,7 @@ import { ApiKeyGuard } from './common/guards/api-key.guard';
     SupabaseModule,
     StripeModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, ImageQueueController],
   providers: [
     AppService,
     {
@@ -44,6 +46,7 @@ import { ApiKeyGuard } from './common/guards/api-key.guard';
       provide: APP_GUARD,
       useClass: ApiKeyGuard,
     },
+    ImageQueueService,
   ],
 })
 export class AppModule {}
